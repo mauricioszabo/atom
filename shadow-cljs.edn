@@ -1,0 +1,14 @@
+;; shadow-cljs configuration
+{:deps true
+
+ :builds {:atom-lib {:target :node-library
+                     :output-to "src/cljs.js"
+                     :exports {:start cljs.atom.core/start!}}
+          :atom {:target :node-script
+                 :output-to "src/atom-cljs.js"
+                 :main cljs.atom.main/start!}
+          :view {:target :browser
+                 :js-options {:js-provider :require}
+                 :output-dir "static"
+                 :asset-path "."
+                 :modules {:main {:init-fn cljs.atom.view/start!}}}}}
