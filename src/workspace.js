@@ -2269,3 +2269,6 @@ module.exports = class Workspace extends Model {
     }
   }
 };
+
+// const cljs = require('./cljs');
+// cljs.start()

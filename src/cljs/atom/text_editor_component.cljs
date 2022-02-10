@@ -1,5 +1,6 @@
-/* global ResizeObserver */
+(ns cljs.atom.text-editor-component)
 
+(js* "
 const etch = require('etch');
 const { Point, Range } = require('text-buffer');
 const LineTopIndex = require('line-top-index');
@@ -16,17 +17,19 @@ const NORMAL_WIDTH_CHARACTER = 'x';
 const DOUBLE_WIDTH_CHARACTER = '我';
 const HALF_WIDTH_CHARACTER = 'ﾊ';
 const KOREAN_CHARACTER = '세';
-const NBSP_CHARACTER = '\u00a0';
-const ZERO_WIDTH_NBSP_CHARACTER = '\ufeff';
+const NBSP_CHARACTER = '\\u00a0';
+const ZERO_WIDTH_NBSP_CHARACTER = '\\ufeff';
 const MOUSE_DRAG_AUTOSCROLL_MARGIN = 40;
 const CURSOR_BLINK_RESUME_DELAY = 300;
 const CURSOR_BLINK_PERIOD = 800;
 
 function scaleMouseDragAutoscrollDelta(delta) {
   return Math.pow(delta / 3, 3) / 280;
-}
+}")
 
-module.exports = class TextEditorComponent {
+(def TextEditorComponent
+  (js* "
+class TextEditorComponent {
   static setScheduler(scheduler) {
     etch.setScheduler(scheduler);
   }
@@ -512,7 +515,7 @@ module.exports = class TextEditorComponent {
     const dataset = { encoding: model.getEncoding() };
     const grammar = model.getGrammar();
     if (grammar && grammar.scopeName) {
-      dataset.grammar = grammar.scopeName.replace(/\./g, ' ');
+      dataset.grammar = grammar.scopeName.replace(/\\./g, ' ');
     }
 
     return $(
@@ -5209,3 +5212,4 @@ function ceilToPhysicalPixelBoundary(virtualPixelPosition) {
     virtualPixelsPerPhysicalPixel
   );
 }
+"))
