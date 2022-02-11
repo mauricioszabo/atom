@@ -1,4 +1,5 @@
-(ns cljs.atom.view)
+(ns cljs.atom.view
+  (:require [promesa.core :as p]))
 
 (def startWindowTime (.now js/Date))
 
@@ -52,6 +53,23 @@
           "ATOM_HOME"
           (.-atomHome (getWindowLoadSettings)))))
 
+(def ^:private initialize
+  (let [init-script-path (.relative
+                          path
+                          entryPointDirPath
+                          (.-windowInitializationScript
+                           (getWindowLoadSettings)))]
+    (if useSnapshot
+      (.customRequire js/snapshotResult
+                      init-script-path)
+      (js/require init-script-path))))
+
+(defn- init-editor! []
+  (p/do!
+    (initialize #js {:blobStore blobStore})
+    (.addMarker StartupTime "window:initialize:end")
+    (.send (.-ipcRenderer electron) "window-command" "window:loaded")))
+
 (defn setupWindow
   []
   (let [CompileCache (if useSnapshot
@@ -79,18 +97,7 @@
                (.customRequire
                 js/snapshotResult
                 "../node_modules/season/lib/cson.js")
-               (js/require "season"))
-        initScriptPath (.relative
-                        path
-                        entryPointDirPath
-                        (.-windowInitializationScript
-                         (getWindowLoadSettings)))
-        _ (def initScriptPath initScriptPath)
-        initialize (if useSnapshot
-                     (.customRequire js/snapshotResult
-                                     initScriptPath)
-                     (js/require initScriptPath))]
-    (def initialize initialize)
+               (js/require "season"))]
     (.setAtomHomeDirectory CompileCache
                            (.-ATOM_HOME (.-env js/process)))
     (.install CompileCache
@@ -117,13 +124,7 @@
      CSON
      (.join path (.getCacheDirectory CompileCache) "cson"))
     (.addMarker StartupTime "window:initialize:start")
-    (.then
-     (initialize #js {:blobStore blobStore})
-     (fn []
-       (.addMarker StartupTime "window:initialize:end")
-       (.send (.-ipcRenderer electron)
-              "window-command"
-              "window:loaded")))))
+    (init-editor!)))
 
 (defn profileStartup [initialTime]
   (let [webContents (.-webContents (.getCurrentWindow (.-remote electron)))
@@ -242,6 +243,7 @@
                             js/document
                             js/console
                             js/require))))
+         (def FileSystemBlobStore FileSystemBlobStore)
          (set! blobStore
            (.load FileSystemBlobStore
                   (.join path
@@ -263,3 +265,20 @@
              (setLoadTime (- (.now js/Date) startTime)))))
        (catch :default error (handleSetupError error)))
      (.addMarker StartupTime "window:onload:end"))))
+
+; (defn start! [])
+; (start!)
+
+(defn ^:dev/before-load stop []
+  (js/console.log "stop"))
+
+(defn ^:dev/before-load start []
+  (js/console.log "start"))
+
+(defn ^:dev/after-load after-load []
+  ; (p/do!
+   ; (init-editor!)
+   (println "Reloaded the Atom Editor"))
+   ; (done)))
+
+; (cljs.atom.view/after-load)

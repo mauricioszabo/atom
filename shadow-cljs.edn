@@ -1,14 +1,27 @@
 ;; shadow-cljs configuration
 {:deps true
 
- :builds {:atom-lib {:target :node-library
-                     :output-to "src/cljs.js"
-                     :exports {:start cljs.atom.core/start!}}
-          :atom {:target :node-script
-                 :output-to "src/atom-cljs.js"
-                 :main cljs.atom.main/start!}
+ :builds {
+          ; :atom-lib {:target :node-library
+          ;            :output-to "src/cljs.js"
+          ;            :exports {:start cljs.atom.core/start!}}
+          ; :atom {:target :node-script
+          ;        :output-to "src/atom-cljs.js"
+          ;        :main cljs.atom.main/start!}
+          :atom-lib {:target :node-library
+                     :output-to "static/main.js"
+                     ; :output-dir "static"
+                     ; :asset-path "."
+                     ; :modules {:main {:init-fn cljs.atom.view/start!}}
+                     ; :js-options {:js-provider :require}
+                     :exports {:start cljs.atom.view/start!}
+                     :devtools {:after-load cljs.atom.view/after-load}}
           :view {:target :browser
-                 :js-options {:js-provider :require}
                  :output-dir "static"
                  :asset-path "."
-                 :modules {:main {:init-fn cljs.atom.view/start!}}}}}
+                 :modules {:main {:init-fn cljs.atom.view/start!}}
+                 :js-options {
+                              :keep-native-requires true}
+                              ;:js-provider :require}
+                 :devtools {:before-load cljs.atom.view/start
+                            :after-load cljs.atom.view/after-load}}}}
