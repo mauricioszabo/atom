@@ -19,9 +19,8 @@
           :view {:target :browser
                  :output-dir "static"
                  :asset-path "."
-                 :modules {:main {:init-fn cljs.atom.view/start!}}
+                 :modules {:main {:init-fn atom.view/start}}
                  :js-options {
-                              :keep-native-requires true}
-                              ;:js-provider :require}
-                 :devtools {:before-load cljs.atom.view/start
-                            :after-load cljs.atom.view/after-load}}}}
+                              :keep-native-requires true
+                              :keep-as-require #{"electron"}}}}}
+                              ; :js-provider :require}}}}
