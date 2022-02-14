@@ -22,5 +22,10 @@
                  :modules {:main {:init-fn atom.view/start}}
                  :js-options {
                               :keep-native-requires true
-                              :keep-as-require #{"electron"}}}}}
+                              :keep-as-require #{"electron"
+                                                 "text-buffer"
+                                                 "oniguruma"
+                                                 "atom"
+                                                 "superstring"
+                                                 "pathwatcher"}}}}}
                               ; :js-provider :require}}}}

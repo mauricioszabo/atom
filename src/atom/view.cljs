@@ -1,5 +1,6 @@
 (ns atom.view
   (:require [promesa.core :as p]
+            [atom.text-editor :refer [TextEditor]]
             ["electron" :as electron]
             ["path" :as path]
             ["module" :as Module]
@@ -7,6 +8,7 @@
             ["../get-release-channel" :as get-release-channel]
             ["../get-window-load-settings" :as get-load-fn]))
 
+(prn :LOL TextEditor)
 (def startWindowTime (.now js/Date))
 
 (defn ^js getWindowLoadSettings []
@@ -26,7 +28,7 @@
 
 (defn setLoadTime [loadTime]
   (when (.-atom js/global)
-    (aset (.-atom js/global) "loadTime" loadTime)))
+    (set! (.. js/global -atom  -loadTime) loadTime)))
 
 (defn handleSetupError [error]
   (let [currentWindow (.getCurrentWindow (.-remote electron))]
@@ -178,6 +180,7 @@
        (catch :default error (handleSetupError error)))
      (.addMarker startup-time "window:onload:end"))))
 
+#_
 (defn ^:dev/after-load-async after-load [done]
   (p/do!
    (init-editor)
