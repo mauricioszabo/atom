@@ -4,11 +4,16 @@
 
 (def AtomTextEditor (delay (js/require "../src/text-editor")))
 
+#_(new TextEditor #js {})
+#_
+(let [ATE @AtomTextEditor]
+  (new ATE #js {}))
 (prn :FIRST)
 (modern/defclass TextEditor
   (constructor [this params]
     (prn :EDITOR @AtomTextEditor)
-    (set! (.-editor this) (new @AtomTextEditor (or params #js {}))))
+    (let [ATE @AtomTextEditor]
+      (set! (.-editor this) (new ATE (or params #js {})))))
 
   Object
   (onDidChangeTitle [this callback]
@@ -483,15 +488,15 @@
 (set! (.-setScheduler TextEditor) #() #_#(.setScheduler @AtomTextEditor %1))
 (set! (.-didUpdateStyles TextEditor) #() #_#(.didUpdateStyles @AtomTextEditor))
 (set! (.-didUpdateScrollbarStyles TextEditor) #() #_#(.didUpdateScrollbarStyles @AtomTextEditor))
-(set! (.-viewForItem TextEditor) #() #_#(.viewForItem @AtomTextEditor %1))
+(set! (.-viewForItem TextEditor) #() #_#(.viewForItem ^js @AtomTextEditor %1))
 (set! (.-deserialize TextEditor) #(do
                                     (prn :LOL %1 %2)
-                                    (.deserialize @AtomTextEditor %1 %2)))
+                                    (.deserialize ^js @AtomTextEditor %1 %2)))
 (prn :FOURTH)
 
 ; (.setClipboard ^js @AtomTextEditor)
 ; (.setClipboard ^js TextEditor)
-(set! (.-AtomTextEditor js/global) TextEditor)
+; (set! (.-AtomTextEditor js/global) TextEditor)
 
-(prn :SET! js/AtomTextEditor)
+; (prn :SET! js/AtomTextEditor)
 ; (set! (.-AtomTextEditor js/global) @AtomTextEditor)
