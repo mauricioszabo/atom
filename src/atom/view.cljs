@@ -170,17 +170,13 @@
          (.install NativeCompileCache)
          (if (.-profileStartup (getWindowLoadSettings))
            (profileStartup (- (.now js/Date) startTime))
-           (do
-             (.addMarker startup-time
-                         "window:setup-window:start")
-             (.then (setupWindow)
-                    (fn []
-                      (.addMarker startup-time
-                                  "window:setup-window:end")))
-             (setLoadTime (- (.now js/Date) startTime)))))
+           (p/do!
+             (.addMarker startup-time "window:setup-window:start")
+             (setupWindow)
+             (.addMarker startup-time "window:setup-window:end")
+             (setLoadTime (- js/Date.now startTime)))))
        (catch :default error (handleSetupError error)))
      (.addMarker startup-time "window:onload:end"))))
-  ; (prn ::GOODBYE startup-time startup-time))
 
 (defn ^:dev/after-load-async after-load [done]
   (p/do!
