@@ -1,19 +1,13 @@
 (ns atom.text-editor
   (:require [shadow.cljs.modern :as modern]))
-  ; (:require ["../text-editor" :as TextEditor]))
+            ; ["../text-editor" :as AtomTextEditor]))
 
-(def AtomTextEditor (delay (js/require "../src/text-editor")))
+(def AtomTextEditor (js/require "../src/text-editor"))
 
-#_(new TextEditor #js {})
-#_
-(let [ATE @AtomTextEditor]
-  (new ATE #js {}))
-(prn :FIRST)
 (modern/defclass TextEditor
   (constructor [this params]
-    (prn :EDITOR @AtomTextEditor)
-    (let [ATE @AtomTextEditor]
-      (set! (.-editor this) (new ATE (or params #js {})))))
+    (js/console.log (js/Error. ""))
+    (set! (.-editor this) (new AtomTextEditor (or params #js {}))))
 
   Object
   (onDidChangeTitle [this callback]
@@ -74,6 +68,8 @@
     (.onDidRemoveDecoration ^js (.-editor this) callback))
   (onDidChangePlaceholderText [this callback]
     (.onDidChangePlaceholderText ^js (.-editor this) callback))
+  (onDidTokenize [this callback]
+    (.onDidTokenize ^js (.-editor this) callback))
   (getBuffer [this]
     (.getBuffer ^js (.-editor this)))
   (getTitle [this]
@@ -88,6 +84,8 @@
     (.isEmpty ^js (.-editor this)))
   (getEncoding [this]
     (.getEncoding ^js (.-editor this)))
+  (getElement [this]
+    (.getElement ^js (.-editor this)))
   (setEncoding [this encoding]
     (.setEncoding ^js (.-editor this) encoding))
   (save [this]
@@ -96,8 +94,8 @@
     (.saveAs ^js (.-editor this) filePath))
   (getText [this]
     (.getText ^js (.-editor this)))
-  (getTextInBufferRange [this range]
-    (.getTextInBufferRange ^js (.-editor this) range))
+  ; (getTextInBufferRange [this range]
+  ;   (.getTextInBufferRange ^js (.-editor this) range))
   (getLineCount [this]
     (.getLineCount ^js (.-editor this)))
   (getScreenLineCount [this]
@@ -477,26 +475,26 @@
   (getPlaceholderText [this]
     (.getPlaceholderText ^js (.-editor this)))
   (setPlaceholderText [this placeholderText]
-    (.setPlaceholderText ^js (.-editor this) placeholderText)))
-(prn :SECOND)
+    (.setPlaceholderText ^js (.-editor this) placeholderText))
+  (isDestroyed [this]
+    (.isDestroyed ^js (.-editor this)))
+  (update [this params]
+    (.update ^js (.-editor this) params))
+
+  (getTextInRange [this range] (.. ^js this getBuffer (getTextInRange range)))
+  (getTextInBufferRange [this range]
+    (js/console.log (.. ^js this getBuffer))
+    (.. ^js this getBuffer (getTextInRange range))))
 
 (set! (.-setClipboard TextEditor) #(do
-                                     (prn :CLIP %1 @AtomTextEditor)
-                                     (.setClipboard ^js @AtomTextEditor %1)))
-(prn :THIRD)
+                                     (prn :CLIP %1 AtomTextEditor)
+                                     (.setClipboard ^js AtomTextEditor %1)))
 
-(set! (.-setScheduler TextEditor) #() #_#(.setScheduler @AtomTextEditor %1))
-(set! (.-didUpdateStyles TextEditor) #() #_#(.didUpdateStyles @AtomTextEditor))
-(set! (.-didUpdateScrollbarStyles TextEditor) #() #_#(.didUpdateScrollbarStyles @AtomTextEditor))
-(set! (.-viewForItem TextEditor) #() #_#(.viewForItem ^js @AtomTextEditor %1))
+(set! (.-setScheduler TextEditor) #(.setScheduler AtomTextEditor %1))
+(set! (.-didUpdateStyles TextEditor) #(.didUpdateStyles AtomTextEditor))
+(set! (.-didUpdateScrollbarStyles TextEditor) #(.didUpdateScrollbarStyles AtomTextEditor))
+(set! (.-viewForItem TextEditor) #(.viewForItem ^js AtomTextEditor %1))
 (set! (.-deserialize TextEditor) #(do
                                     (prn :LOL %1 %2)
-                                    (.deserialize ^js @AtomTextEditor %1 %2)))
+                                    (.deserialize ^js AtomTextEditor %1 %2)))
 (prn :FOURTH)
-
-; (.setClipboard ^js @AtomTextEditor)
-; (.setClipboard ^js TextEditor)
-; (set! (.-AtomTextEditor js/global) TextEditor)
-
-; (prn :SET! js/AtomTextEditor)
-; (set! (.-AtomTextEditor js/global) @AtomTextEditor)
