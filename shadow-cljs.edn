@@ -1,5 +1,9 @@
 ;; shadow-cljs configuration
-{:deps true
+{;:deps true
+
+ :source-paths ["src" "cljs-test"]
+
+ :dependencies [[funcool/promesa "6.0.2"]]
 
  :builds {
           ; :atom-lib {:target :node-library
@@ -27,5 +31,19 @@
                                                  "oniguruma"
                                                  "atom"
                                                  "superstring"
-                                                 "pathwatcher"}}}}}
+                                                 "pathwatcher"}}}
                               ; :js-provider :require}}}}
+          :view-as-lib {:target :node-library
+                        :output-to "static/cljs.js"
+                        :exports-var atom.view-lib/exports
+                        :js-options {
+                                     :js-provider :shadow
+                                     :keep-native-requires true
+                                     :keep-as-require #{"electron"
+                                                        "text-buffer"
+                                                        "oniguruma"
+                                                        "atom"
+                                                        "superstring"
+                                                        "pathwatcher"}}
+                        ; :js-provider :require}}}}
+                        :compiler-options {:source-map false}}}}
