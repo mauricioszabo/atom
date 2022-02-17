@@ -1,7 +1,8 @@
 const _ = require('underscore-plus');
 const { Emitter, Disposable, CompositeDisposable } = require('event-kit');
+// const TextEditor = AtomTextEditor;
 // const TextEditor = require('./text-editor');
-const TextEditor = AtomTextEditor;
+const {TextEditor} = require('../static/cljs');
 const ScopeDescriptor = require('./scope-descriptor');
 
 const EDITOR_PARAMS_BY_SETTING_KEY = [
@@ -93,8 +94,8 @@ module.exports = class TextEditorRegistry {
     params = Object.assign({ assert: this.assert }, params);
 
     let scope = null;
-    if (params.buffer) {
-      const { grammar } = params.buffer.getLanguageMode();
+    if (params.getBuffer) {
+      const { grammar } = params.getBuffer().getLanguageMode();
       if (grammar) {
         scope = new ScopeDescriptor({ scopes: [grammar.scopeName] });
       }
@@ -162,7 +163,7 @@ module.exports = class TextEditorRegistry {
     this.editorsWithMaintainedConfig.add(editor);
 
     this.updateAndMonitorEditorSettings(editor);
-    const languageChangeSubscription = editor.buffer.onDidChangeLanguageMode(
+    const languageChangeSubscription = editor.getBuffer().onDidChangeLanguageMode(
       (newLanguageMode, oldLanguageMode) => {
         this.updateAndMonitorEditorSettings(editor, oldLanguageMode);
       }
@@ -239,7 +240,7 @@ module.exports = class TextEditorRegistry {
   }
 
   updateEditorSettingsForLanguageMode(editor, oldLanguageMode) {
-    const newLanguageMode = editor.buffer.getLanguageMode();
+    const newLanguageMode = editor.getBuffer().getLanguageMode();
 
     if (oldLanguageMode) {
       const newSettings = this.textEditorParamsForScope(

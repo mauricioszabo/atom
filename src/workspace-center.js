@@ -1,7 +1,7 @@
 'use strict';
 
 // const TextEditor = require('./text-editor');
-const TextEditor = AtomTextEditor;
+const {TextEditor} = require('../static/cljs');
 const PaneContainer = require('./pane-container');
 
 // Essential: Represents the workspace at the center of the entire window.

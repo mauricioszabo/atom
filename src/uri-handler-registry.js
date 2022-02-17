@@ -80,9 +80,13 @@ module.exports = class URIHandlerRegistry {
     }
 
     if (this.registrations.has(host)) {
-      throw new Error(
-        `There is already a URI host handler for the host ${host}`
-      );
+      if(goog.DEBUG) {
+        console.error(`There is already a URI host handler for the host ${host}`)
+      } else {
+        throw new Error(
+          `There is already a URI host handler for the host ${host}`
+        );
+      }
     } else {
       this.registrations.set(host, callback);
     }

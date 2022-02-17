@@ -10,8 +10,9 @@ const RipgrepDirectorySearcher = require('./ripgrep-directory-searcher');
 const Dock = require('./dock');
 const Model = require('./model');
 const StateStore = require('./state-store');
+// const TextEditor = AtomTextEditor;
 // const TextEditor = require('./text-editor');
-const TextEditor = AtomTextEditor;
+const {TextEditor} = require('../static/cljs');
 const Panel = require('./panel');
 const PanelContainer = require('./panel-container');
 const Task = require('./task');
@@ -606,8 +607,8 @@ module.exports = class Workspace extends Model {
           this.textEditorRegistry.add(item),
           this.textEditorRegistry.maintainConfig(item)
         );
-        if (!this.project.findBufferForId(item.buffer.id)) {
-          this.project.addBuffer(item.buffer);
+        if (!this.project.findBufferForId(item.getBuffer().id)) {
+          this.project.addBuffer(item.getBuffer());
         }
         item.onDidDestroy(() => {
           subscriptions.dispose();

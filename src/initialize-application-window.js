@@ -1,7 +1,9 @@
 const AtomEnvironment = require('./atom-environment');
 const ApplicationDelegate = require('./application-delegate');
 const Clipboard = require('./clipboard');
-const TextEditor = AtomTextEditor;
+const TextEditor = require('./text-editor');
+// const {TextEditor} = require('../static/cljs');
+// const TextEditor = AtomTextEditor;
 
 require('./text-editor-component');
 require('./file-system-blob-store');
@@ -21,7 +23,7 @@ if (global.isGeneratingSnapshot) {
   require('autosave');
   require('background-tips');
   require('bookmarks');
-  require('bracket-matcher');
+  // require('bracket-matcher');
   require('command-palette');
   require('deprecation-cop');
   require('dev-live-reload');

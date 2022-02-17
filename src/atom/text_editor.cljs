@@ -2,12 +2,16 @@
   (:require [shadow.cljs.modern :as modern]))
             ; ["../text-editor" :as AtomTextEditor]))
 
-(def AtomTextEditor (js/require "../src/text-editor"))
+(defonce AtomTextEditor (atom nil))
 
+(set! *warn-on-infer* false)
 (modern/defclass TextEditor
   (constructor [this params]
-    (js/console.log (js/Error. ""))
-    (set! (.-editor this) (new AtomTextEditor (or params #js {}))))
+    ; (js/console.log "underef")
+    ; (js/console.log AtomTextEditor)
+    (let [AtomTextEditor @AtomTextEditor]
+      ; (js/console.log AtomTextEditor)
+      (set! (.-editor this) (new AtomTextEditor (or params #js {})))))
 
   Object
   (onDidChangeTitle [this callback]
@@ -476,25 +480,30 @@
     (.getPlaceholderText ^js (.-editor this)))
   (setPlaceholderText [this placeholderText]
     (.setPlaceholderText ^js (.-editor this) placeholderText))
+
+  ;; Private methods?
   (isDestroyed [this]
     (.isDestroyed ^js (.-editor this)))
   (update [this params]
     (.update ^js (.-editor this) params))
-
   (getTextInRange [this range] (.. ^js this getBuffer (getTextInRange range)))
   (getTextInBufferRange [this range]
     (js/console.log (.. ^js this getBuffer))
     (.. ^js this getBuffer (getTextInRange range))))
+(set! *warn-on-infer* true)
 
 (set! (.-setClipboard TextEditor) #(do
-                                     (prn :CLIP %1 AtomTextEditor)
-                                     (.setClipboard ^js AtomTextEditor %1)))
+                                     (prn :CLIP %1 ^js @AtomTextEditor)
+                                     (.setClipboard ^js @AtomTextEditor %1)))
 
-(set! (.-setScheduler TextEditor) #(.setScheduler AtomTextEditor %1))
-(set! (.-didUpdateStyles TextEditor) #(.didUpdateStyles AtomTextEditor))
-(set! (.-didUpdateScrollbarStyles TextEditor) #(.didUpdateScrollbarStyles AtomTextEditor))
-(set! (.-viewForItem TextEditor) #(.viewForItem ^js AtomTextEditor %1))
-(set! (.-deserialize TextEditor) #(do
-                                    (prn :LOL %1 %2)
-                                    (.deserialize ^js AtomTextEditor %1 %2)))
+(set! (.-setScheduler TextEditor) #(.setScheduler ^js @AtomTextEditor %1))
+(set! (.-didUpdateStyles TextEditor) #(.didUpdateStyles ^js @AtomTextEditor))
+(set! (.-didUpdateScrollbarStyles TextEditor) #(.didUpdateScrollbarStyles ^js @AtomTextEditor))
+(set! (.-viewForItem TextEditor) #(.viewForItem ^js @AtomTextEditor %1))
+(set! (.-deserialize TextEditor) #(.deserialize ^js @AtomTextEditor %1 %2))
 (prn :FOURTH)
+
+(defn set-editor! [^js editor]
+  (prn :TE editor)
+  (reset! AtomTextEditor editor))
+  ; (.setClipboard editor (new Clipboard)))

@@ -1,9 +1,8 @@
 const Grim = require('grim');
 const { CompositeDisposable, Emitter } = require('event-kit');
 const PaneAxis = require('./pane-axis');
-console.log("LLL")
-const TextEditor = AtomTextEditor;
-console.log(TextEditor)
+const TextEditor = require('./text-editor');
+// const TextEditor = AtomTextEditor;
 const { createPaneElement } = require('./pane-element');
 
 let nextInstanceId = 1;

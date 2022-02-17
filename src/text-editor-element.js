@@ -1,4 +1,5 @@
-const { Emitter, Range } = require('atom');
+const { Emitter } = require('event-kit');
+const { Range } = require('text-buffer');
 const Grim = require('grim');
 const TextEditorComponent = require('./text-editor-component');
 const dedent = require('dedent');
@@ -363,6 +364,8 @@ class TextEditorElement extends HTMLElement {
   }
 }
 
-window.customElements.define('atom-text-editor', TextEditorElement);
+if(!window.customElements.get('atom-text-editor')) {
+  window.customElements.define('atom-text-editor', TextEditorElement);
+}
 
 module.exports = TextEditorElement;

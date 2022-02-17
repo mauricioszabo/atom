@@ -170,7 +170,7 @@ module.exports = class Selection {
 
   // Public: Returns the text in the selection.
   getText() {
-    return this.editor.buffer.getTextInRange(this.getBufferRange());
+    return this.editor.getBuffer().getTextInRange(this.getBufferRange());
   }
 
   // Public: Identifies if a selection intersects with a given buffer range.
@@ -304,7 +304,7 @@ module.exports = class Selection {
 
   // Public: Selects all the text in the buffer.
   selectAll() {
-    this.setBufferRange(this.editor.buffer.getRange(), { autoscroll: false });
+    this.setBufferRange(this.editor.getBuffer().getRange(), { autoscroll: false });
   }
 
   // Public: Selects all the text from the current cursor position to the
@@ -507,7 +507,7 @@ module.exports = class Selection {
     this.clear(options);
 
     let autoIndentFirstLine = false;
-    const precedingText = this.editor.getTextInRange([
+    const precedingText = this.editor.getBuffer().getTextInRange([
       [oldBufferRange.start.row, 0],
       oldBufferRange.start
     ]);
@@ -533,7 +533,7 @@ module.exports = class Selection {
     ) {
       autoIndentFirstLine = true;
       const firstLine = precedingText + firstInsertedLine;
-      const languageMode = this.editor.buffer.getLanguageMode();
+      const languageMode = this.editor.getBuffer().getLanguageMode();
       desiredIndentLevel =
         languageMode.suggestedIndentForLineAtBufferRow &&
         languageMode.suggestedIndentForLineAtBufferRow(
@@ -551,7 +551,7 @@ module.exports = class Selection {
     text = firstInsertedLine;
     if (remainingLines.length > 0) text += `\n${remainingLines.join('\n')}`;
 
-    const newBufferRange = this.editor.buffer.setTextInRange(
+    const newBufferRange = this.editor.getBuffer().setTextInRange(
       oldBufferRange,
       text,
       pick(options, 'undo', 'normalizeLineEndings')
@@ -717,7 +717,7 @@ module.exports = class Selection {
   deleteSelectedText(options = {}) {
     if (!this.ensureWritable('deleteSelectedText', options)) return;
     const bufferRange = this.getBufferRange();
-    if (!bufferRange.isEmpty()) this.editor.buffer.delete(bufferRange);
+    if (!bufferRange.isEmpty()) this.editor.getBuffer().delete(bufferRange);
     if (this.cursor) this.cursor.setBufferPosition(bufferRange.start);
   }
 
@@ -734,16 +734,16 @@ module.exports = class Selection {
       const start = this.cursor.getScreenRow();
       const range = this.editor.bufferRowsForScreenRows(start, start + 1);
       if (range[1] > range[0]) {
-        this.editor.buffer.deleteRows(range[0], range[1] - 1);
+        this.editor.getBuffer().deleteRows(range[0], range[1] - 1);
       } else {
-        this.editor.buffer.deleteRow(range[0]);
+        this.editor.getBuffer().deleteRow(range[0]);
       }
     } else {
       const start = range.start.row;
       let end = range.end.row;
-      if (end !== this.editor.buffer.getLastRow() && range.end.column === 0)
+      if (end !== this.editor.getBuffer().getLastRow() && range.end.column === 0)
         end--;
-      this.editor.buffer.deleteRows(start, end);
+      this.editor.getBuffer().deleteRows(start, end);
     }
     this.cursor.setBufferPosition({
       row: this.cursor.getBufferRow(),
@@ -763,7 +763,7 @@ module.exports = class Selection {
     let joinMarker;
     const selectedRange = this.getBufferRange();
     if (selectedRange.isEmpty()) {
-      if (selectedRange.start.row === this.editor.buffer.getLastRow()) return;
+      if (selectedRange.start.row === this.editor.getBuffer().getLastRow()) return;
     } else {
       joinMarker = this.editor.markBufferRange(selectedRange, {
         invalidate: 'never'
@@ -789,9 +789,9 @@ module.exports = class Selection {
       const currentRow = selectedRange.start.row;
       const nextRow = currentRow + 1;
       const insertSpace =
-        nextRow <= this.editor.buffer.getLastRow() &&
-        this.editor.buffer.lineLengthForRow(nextRow) > 0 &&
-        this.editor.buffer.lineLengthForRow(currentRow) > 0;
+        nextRow <= this.editor.getBuffer().getLastRow() &&
+        this.editor.getBuffer().lineLengthForRow(nextRow) > 0 &&
+        this.editor.getBuffer().lineLengthForRow(currentRow) > 0;
       if (insertSpace) this.insertText(' ', options);
 
       this.cursor.moveToEndOfLine();
@@ -904,8 +904,8 @@ module.exports = class Selection {
   copy(maintainClipboard = false, fullLine = false) {
     if (this.isEmpty()) return;
     const { start, end } = this.getBufferRange();
-    const selectionText = this.editor.getTextInRange([start, end]);
-    const precedingText = this.editor.getTextInRange([[start.row, 0], start]);
+    const selectionText = this.editor.getBuffer().getTextInRange([start, end]);
+    const precedingText = this.editor.getBuffer().getTextInRange([[start.row, 0], start]);
     const startLevel = this.editor.indentLevelForLine(precedingText);
 
     if (maintainClipboard) {
@@ -1012,8 +1012,8 @@ module.exports = class Selection {
     if (!this.ensureWritable('indentSelectedRows', options)) return;
     const [start, end] = this.getBufferRowRange();
     for (let row = start; row <= end; row++) {
-      if (this.editor.buffer.lineLengthForRow(row) !== 0) {
-        this.editor.buffer.insert([row, 0], this.editor.getTabText());
+      if (this.editor.getBuffer().lineLengthForRow(row) !== 0) {
+        this.editor.getBuffer().insert([row, 0], this.editor.getTabText());
       }
     }
   }

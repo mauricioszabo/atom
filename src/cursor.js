@@ -496,7 +496,7 @@ module.exports = class Cursor extends Model {
   //      (default: {::wordRegExp})
   getPreviousWordBoundaryBufferPosition(options = {}) {
     const currentBufferPosition = this.getBufferPosition();
-    const previousNonBlankRow = this.editor.buffer.previousNonBlankRow(
+    const previousNonBlankRow = this.editor.getBuffer().previousNonBlankRow(
       currentBufferPosition.row
     );
     const scanRange = Range(
@@ -504,7 +504,7 @@ module.exports = class Cursor extends Model {
       currentBufferPosition
     );
 
-    const ranges = this.editor.buffer.findAllInRangeSync(
+    const ranges = this.editor.getBuffer().findAllInRangeSync(
       options.wordRegex || this.wordRegExp(),
       scanRange
     );
@@ -539,7 +539,7 @@ module.exports = class Cursor extends Model {
       this.editor.getEofBufferPosition()
     );
 
-    const range = this.editor.buffer.findInRangeSync(
+    const range = this.editor.getBuffer().findInRangeSync(
       options.wordRegex || this.wordRegExp(),
       scanRange
     );
@@ -577,7 +577,7 @@ module.exports = class Cursor extends Model {
       ? new Range(new Point(position.row - 1, 0), position)
       : new Range(new Point(position.row, 0), position);
 
-    const ranges = this.editor.buffer.findAllInRangeSync(
+    const ranges = this.editor.getBuffer().findAllInRangeSync(
       options.wordRegex || this.wordRegExp(options),
       scanRange
     );
@@ -610,7 +610,7 @@ module.exports = class Cursor extends Model {
       ? new Range(position, new Point(position.row + 2, 0))
       : new Range(position, new Point(position.row, Infinity));
 
-    const ranges = this.editor.buffer.findAllInRangeSync(
+    const ranges = this.editor.getBuffer().findAllInRangeSync(
       options.wordRegex || this.wordRegExp(options),
       scanRange
     );
@@ -657,7 +657,7 @@ module.exports = class Cursor extends Model {
   //     (default: {::wordRegExp}).
   getCurrentWordBufferRange(options = {}) {
     const position = this.getBufferPosition();
-    const ranges = this.editor.buffer.findAllInRangeSync(
+    const ranges = this.editor.getBuffer().findAllInRangeSync(
       options.wordRegex || this.wordRegExp(options),
       new Range(new Point(position.row, 0), new Point(position.row, Infinity))
     );
